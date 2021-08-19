@@ -28,9 +28,10 @@ async def url(message: types.Message):
         await message.answer("Wrong url!")
         return
     r = requests.get(url, stream=True)
-    if not int(r.headers['Content-Length']) < 100_000:
-        await message.answer("Response content-length is too long")
-        return
+    if r.headers.get("Content-Length"):
+        if not int(r.headers['Content-Length']) < 100_000:
+            await message.answer("Response content-length is too long")
+            return
     if not r.headers['Content-Type']=="application/json":
         await message.answer("Response content-type is not in json format")
         return
