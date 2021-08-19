@@ -32,8 +32,9 @@ async def url(message: types.Message):
         if not int(r.headers['Content-Length']) < 100_000:
             await message.answer("Response content-length is too long")
             return
-    if not r.headers['Content-Type']=="application/json":
-        await message.answer("Response content-type is not in json format")
+    content_type = r.headers.get("Content-Type")
+    if not "application/json" in content_type:
+        await message.answer(f"Response content-type({content_type}) is not in json format")
         return
     for i in safe_split_text(json.dumps(r.json(), indent=2)):
         await message.answer(hcode(i))
